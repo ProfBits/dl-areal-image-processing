@@ -1,0 +1,1 @@
+Code taken form: https://github.com/ThomasWangWeiHong/Shadow-Detection-Algorithm-for-Aerial-and-Satellite-Images
