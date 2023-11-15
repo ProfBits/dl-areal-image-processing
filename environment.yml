@@ -1,0 +1,24 @@
+name: deep-learning
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+  - nvidia
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - tensorflow
+  - pytorch
+  - pytorch-cuda=12.1 # with gpu
+  - torchvision
+  - torchaudio
+  - opencv
+  - pycocotools
+  - ipykernel
+  - git
+  - pip
+  - pip:
+      - git+https://github.com/facebookresearch/segment-anything.git
