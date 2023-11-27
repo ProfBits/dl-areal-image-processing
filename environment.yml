@@ -24,6 +24,9 @@ dependencies:
   - trame # interactive 3d
   - ipywidgets # interactive 3d
   - rasterio
+  - geopandas
+  - segment-geospatial
+  - leafmap
   - git
   - pip
   - pip:
