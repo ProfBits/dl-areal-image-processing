@@ -166,3 +166,6 @@ cython_debug/
 /unet/Potsdam/5_Labels_all_Patched/
 /unet/Potsdam/2_Ortho_RGB.zip
 /unet/Potsdam/5_Labels_all.zip
+segment-anything/checkpoints/
+data/*
+segment-geospatial/tmp/*
