@@ -10,15 +10,17 @@ dependencies:
   - pandas
   - matplotlib
   - seaborn
+  - Pillow
+  - opencv
+  - ipykernel
   - tensorflow
   - scikit-learn
+  - scikit-image
   - pytorch
   - pytorch-cuda=12.1 # with gpu
   - torchvision
   - torchaudio
-  - opencv
   - pycocotools
-  - ipykernel
   - laspy # for laserdata
   - pyvista
   - trame # interactive 3d
