@@ -2,6 +2,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import rasterio
 
 
 def plot_overlay(image_path, mask_math, alpha=0.5, title=None, output=None):
@@ -50,3 +51,41 @@ def plot_overlay(image_path, mask_math, alpha=0.5, title=None, output=None):
     # if output:
     #     plt.savefig(output, bbox_inches='tight')
     plt.show()
+
+
+def create_empty_mask(image_path, output_mask_path):
+    """
+    Create an empty mask with the same dimensions as the image.
+
+    Parameters
+    ----------
+    image_path : str
+        Path to the image.
+    output_mask_path : str
+        Path to save the mask.
+    """
+
+    # Read the image using rasterio
+    with rasterio.open(image_path) as src:
+        # Get the geotransform and other relevant information
+        crs = src.crs
+        transform = src.transform
+        dtype = np.uint8
+
+        array = np.zeros((src.height, src.width), dtype=dtype)
+
+        metadata = {
+            'driver': 'GTiff',
+            'height': src.height,
+            'width': src.width,
+            'count': 1,  # Number of bands (1 for grayscale)
+            'dtype': dtype,
+            'crs': crs,
+            'transform': transform,
+            'compress': 'deflate',
+        }
+
+        # Create an empty mask using rasterio
+        with rasterio.open(output_mask_path, 'w', **metadata) as dst:
+            # Write an empty array to the mask
+            dst.write(array, 1)
