@@ -89,3 +89,49 @@ def create_empty_mask(image_path, output_mask_path):
         with rasterio.open(output_mask_path, 'w', **metadata) as dst:
             # Write an empty array to the mask
             dst.write(array, 1)
+
+
+# Function to print geotransform and CRS information of a raster file
+def print_geo_info(raster_path):
+    with rasterio.open(raster_path) as src:
+        print(f"Bounds: {src.bounds}")
+        print(f"Resolution: {src.res}")
+        print(f"CRS: {src.crs}")
+        print(f"Transform: {src.transform}")
+
+
+def increase_contrast(image, output=None, alpha=1.5, beta=0):
+
+    if isinstance(image, str):
+        image_path = image
+        image = cv2.imread(image_path)
+
+    # Apply contrast adjustment using the formula: output = alpha * input + beta
+    adjusted_image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
+
+    if output:
+        cv2.imwrite(output, adjusted_image)
+
+    return adjusted_image
+
+
+def increase_saturation(image, output=None, factor=1.5):
+
+    if isinstance(image, str):
+        image_path = image
+        image = cv2.imread(image_path)
+
+    # Convert the image from BGR to HSV
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # Increase the saturation channel
+    hsv_image[:, :, 1] = np.clip(
+        hsv_image[:, :, 1] * factor, 0, 255).astype(np.uint8)
+
+    # Convert the image back to BGR
+    saturated_image = cv2.cvtColor(hsv_image, cv2.COLOR_HSV2BGR)
+
+    if output:
+        cv2.imwrite(output, saturated_image)
+
+    return saturated_image
