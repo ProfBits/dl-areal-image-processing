@@ -155,7 +155,23 @@ def cut_houses_from_tif(image_path, output='and', show_images=True):
     except Exception as e:
         print(e)
 
+#cut houses interface:
+        
+#def create_house_masks(image: str, output: Optional[str] = None) -> ndarray if output is not none > write image to output
+def create_house_masks(image:str, output:str = None,)->np.ndarray:
+    return None
 
+#def cut_mask_from_image(image: str | ndarray, mask: str | ndarray, output: Optional[str] = None, inverted: bool = False) -> ndarray
+def cut_mask_from_image(image:str|np.ndarray, mask:str|np.ndarray, output:str = None, inverted:bool = False)-> np.ndarray:
+    return None
+    
+#def invert_mask(mask: str | ndarray, output: Optional[str] = None) -> ndarray
+def invert_mask(mask:str|np.ndarray, output: str = None)-> np.ndarray:
+    return None
+
+#def cut_houses(image: str, output: Optional[str] = None, inverted: bool = False) -> ndarray
+def cut_houses(image: str, output:str = None, inverted: bool = False)-> np.ndarray:
+    return None
 
 if __name__ == "__main__":
     
