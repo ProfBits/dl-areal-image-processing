@@ -8,7 +8,7 @@ def morphologie(image: str | cv2.typing.MatLike, output: Optional[str] = None,
                 shape_close: int = cv2.MORPH_RECT, size_close: Sequence[int] = (3, 3),
                 open_first: bool = False)\
         -> cv2.typing.MatLike:
-    if image is str:
+    if isinstance(image, str):
         image = cv2.imread(image)
 
     open_kernel: cv2.typing.MatLike = cv2.getStructuringElement(shape_open, size_open)

@@ -1,11 +1,12 @@
 import json
+import random
 import sys
 from enum import Enum
 from typing import Callable, Optional, Sequence
 import cv2
-import preprocessing as pre
-import detection as detect
-import postprocessing as post
+import parameterized.preprocessing as pre
+import parameterized.detection as detect
+import parameterized.postprocessing as post
 import numpy as np
 
 
@@ -36,18 +37,19 @@ def __bool_parameter(default: bool) -> __Parameter:
 
 
 def __continues_parameter(limits: tuple[any, any], default: any, is_int: bool = False) -> __Parameter:
-    return __Parameter(_ParameterType.Categorical, default, limits=limits, is_int=is_int)
+    return __Parameter(_ParameterType.Continues, default, limits=limits, is_int=is_int)
 
 
 __morph_shapes = [cv2.MORPH_RECT, cv2.MORPH_CROSS]
 
 
 __args: dict[str, __Parameter] = {
-    "sr_convolve_window_size": __bool_parameter(True),
+    "enable_shadow_reduction": __bool_parameter(True),
+    "sr_convolve_window_size": __continues_parameter((1, 15), 5, True),
     "sr_num_thresholds": __continues_parameter((0, 7), 2, True),
     "sr_struc_elem_size": __continues_parameter((1, 15), 5, True),
     "sr_exponent": __continues_parameter((-4, 5), 1),
-    "blurr_size": __continues_parameter((1, 15), 5, True),
+    "blurr_size": __continues_parameter((0, 7), 5, True),
     "blurr_sigma": __continues_parameter((0, 6), 0),
     "use_hsv": __bool_parameter(False),
     "hsv_limit0_H_MIN": __continues_parameter((0, 255), 64, True),
@@ -67,9 +69,9 @@ __args: dict[str, __Parameter] = {
     "rgb_green_weight": __continues_parameter((0, 2), 1),
     "rgb_sub_weight": __continues_parameter((0, 2), 1),
     "rgb_sub_offset": __continues_parameter((-255, 255), 0),
-    "hist_slope": __continues_parameter((-255, 255), 8),
-    "hist_offset": __continues_parameter((-255, 255), 16),
-    "bin_threshold": __continues_parameter((0, 1), 0.5),
+    "bin_threshold": __continues_parameter((0, 255), 127, True),
+    "hist_slope": __continues_parameter((-127, 127), 4),
+    "hist_offset": __continues_parameter((-127, 127), 0),
     "morph_shape_open": __categorical_parameter(__morph_shapes, cv2.MORPH_RECT),
     "morph_size_open_x": __continues_parameter((1, 9), 3, True),
     "morph_size_open_y": __continues_parameter((1, 9), 3, True),
@@ -83,13 +85,13 @@ __args: dict[str, __Parameter] = {
 def __run(image: str | cv2.typing.MatLike, output: Optional[str], parameters: dict[str, any]) -> cv2.typing.MatLike:
     if parameters["enable_shadow_reduction"] is True:
         image = pre.remove_shadows(image,
-                                   convolve_window_size=parameters["sr_convolve_window_size"],
-                                   num_thresholds=(parameters["sr_num_thresholds"] * 2) + 1,
+                                   convolve_window_size=(parameters["sr_convolve_window_size"] * 2) + 1,
+                                   num_thresholds=parameters["sr_num_thresholds"],
                                    struc_elem_size=parameters["sr_struc_elem_size"],
                                    exponent=parameters["sr_exponent"])
 
     image = pre.gaussian_blur(image,
-                              size=parameters["blurr_size"],
+                              size=(parameters["blurr_size"] * 2) + 1,
                               sigma=parameters["blurr_sigma"])
 
     if parameters["use_hsv"] is True:
@@ -140,7 +142,7 @@ def __run(image: str | cv2.typing.MatLike, output: Optional[str], parameters: di
 
 def create_process(parameters: dict[str, any])\
         -> Callable[[str | cv2.typing.MatLike, Optional[str]], cv2.typing.MatLike]:
-    return lambda image, output: __run(image, output, parameters)
+    return lambda image, output = None: __run(image, output, parameters)
 
 
 def __cross_over_continues(a: any, b: any,
@@ -183,7 +185,7 @@ def cross_over(a: dict[str, any], b: dict[str, any], mutation_chance: float) -> 
 
 def __get_random_parameter_value(parameter: __Parameter):
     if parameter.paramType == _ParameterType.Categorical:
-        return parameter.values[np.random.randint(0, len(parameter.values))]
+        return random.choice(parameter.values)
 
     lower = parameter.limits[0]
     upper = parameter.limits[1]
@@ -207,3 +209,7 @@ def to_string(configuration: dict[str, any]):
 
 def load_string(data: str) -> dict[str, any]:
     return json.loads(data)
+
+
+def get_default_configuration():
+    return {key: __args[key].default for key in __args}

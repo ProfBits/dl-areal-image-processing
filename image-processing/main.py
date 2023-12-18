@@ -2,10 +2,11 @@ import v1.green_detector
 import v2.shadow_corrected_green_detector
 import v3.noise_reduction_green_detector
 import optimize
+import parameterized.configurator as config
 
-folder = "image-processing/testing/"
+folder = "testing/"
 data = [
-    (f'{folder}00_input.png', f'{folder}00_input.png'),
+    (f'{folder}00_input.png', f'{folder}00_input_corrected.png'),
     (f'{folder}32692_5347.png', f'{folder}32692_5347_corrected.png')
 ]
 population_size: int = 50
@@ -18,6 +19,11 @@ if __name__ == '__main__':
     #v1.green_detector.process_image("00_input.tif")
     #v2.shadow_corrected_green_detector.process_image("00_input.tif")
     #v3.noise_reduction_green_detector.process_image("00_input.tif")
+
+    #default = config.get_default_configuration()
+    #defaultRunner = config.create_process(default)
+    #res = defaultRunner(f'{folder}00_input.png', None)
+
 
     best = optimize.run(data,
                  population_size=population_size,

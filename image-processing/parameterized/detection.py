@@ -61,7 +61,7 @@ def hsv_detection(image: str | cv2.typing.MatLike, output: Optional[str] = None,
         h_limit = __check_bounds(h, limit[Limit.H_MIN], limit[Limit.H_MAX])
         s_limit = __check_bounds(s, limit[Limit.S_MIN], limit[Limit.S_MAX])
         v_limit = __check_bounds(v, limit[Limit.V_MIN], limit[Limit.V_MAX])
-        res = np.logical_or(res, np.logical_and(h_limit, s_limit, v_limit))
+        res = np.logical_or(res, np.logical_and(h_limit, s_limit, v_limit)) * 1
 
     if output is not None:
         cv2.imwrite(output, res)
@@ -72,10 +72,11 @@ def hsv_detection(image: str | cv2.typing.MatLike, output: Optional[str] = None,
 def histogram_adjustment(image: str | cv2.typing.MatLike, output: Optional[str] = None,
                          slope: float = 1, offset: float = 0)\
         -> cv2.typing.MatLike:
-    if image is str:
+    if isinstance(image, str):
         image = cv2.imread(image)
 
     res = cv2.addWeighted(image, 0.0, image, slope, offset)
+    res = cv2.min(cv2.max(res, 0), 255)
 
     if output is not None:
         cv2.imwrite(output, res)
@@ -83,12 +84,12 @@ def histogram_adjustment(image: str | cv2.typing.MatLike, output: Optional[str] 
 
 
 def binarisation(image: str | cv2.typing.MatLike, output: Optional[str] = None,
-                 threshold: float = 0.5)\
+                 threshold: int = 127)\
         -> cv2.typing.MatLike:
-    if image is str:
+    if isinstance(image, str):
         image = cv2.imread(image)
 
-    _, binary_mask = cv2.threshold(image, threshold, 1.0, cv2.THRESH_BINARY)
+    _, binary_mask = cv2.threshold(image, threshold, 255, cv2.THRESH_BINARY)
 
     if output is not None:
         cv2.imwrite(output, binary_mask)

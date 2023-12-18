@@ -31,7 +31,7 @@ def run(data: list[tuple[str, str]],
         list[str]: The best n configurations serialized to a string
     """
 
-    data: list[tuple[str, cv2.typing.MatLike]] = [(image, cv2.imread(mask)) for image, mask in data]
+    data: list[tuple[str, cv2.typing.MatLike]] = [(image, cv2.imread(mask, cv2.IMREAD_GRAYSCALE)) for image, mask in data]
     population = [config.get_random_configuration() for _ in range(population_size)]
     results = []
     for generation in range(generations):
