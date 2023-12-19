@@ -1,5 +1,6 @@
 
 import cv2
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import rasterio
@@ -64,6 +65,11 @@ def create_empty_mask(image_path, output_mask_path):
     output_mask_path : str
         Path to save the mask.
     """
+
+    # Create the directory if it doesn't exist
+    output_dir = os.path.dirname(output_mask_path)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     # Read the image using rasterio
     with rasterio.open(image_path) as src:
