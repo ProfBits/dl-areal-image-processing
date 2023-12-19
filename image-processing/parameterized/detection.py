@@ -70,13 +70,14 @@ def hsv_detection(image: str | cv2.typing.MatLike, output: Optional[str] = None,
 
 
 def histogram_adjustment(image: str | cv2.typing.MatLike, output: Optional[str] = None,
-                         slope: float = 1, offset: float = 0)\
+                         slope: int = 1, offset: int = 0)\
         -> cv2.typing.MatLike:
     if isinstance(image, str):
         image = cv2.imread(image)
 
-    res = cv2.addWeighted(image, 0.0, image, slope, offset)
-    res = cv2.min(cv2.max(res, 0), 255)
+    res = np.add(np.multiply(image, slope), offset)
+    res = np.clip(res, 0, 255)
+    res = cv2.convertScaleAbs(res)
 
     if output is not None:
         cv2.imwrite(output, res)
