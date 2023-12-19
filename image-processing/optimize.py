@@ -33,6 +33,8 @@ def run(data: list[tuple[str, str]],
 
     data: list[tuple[str, cv2.typing.MatLike]] = [(image, cv2.imread(mask, cv2.IMREAD_GRAYSCALE)) for image, mask in data]
     population = [config.get_random_configuration() for _ in range(population_size)]
+    population[0] = config.get_default_configuration()
+    population[1] = config.get_default_configuration()
     results = []
     for generation in range(generations):
         print(f'Generation {generation}: Starting...', end='\r', flush=True)
@@ -41,8 +43,17 @@ def run(data: list[tuple[str, str]],
         results = [__evaluate(process, data) for process in processes]
 
         best = np.max(results)
-        bar = np.median(results)
-        print(f'Generation {generation}: Best: {np.max(results):2.3f}, Requirement: {bar:2.3f} | Reproducing...', end='\r', flush=True)
+        bar = max(np.median(results), 0.1)
+        print(f'Generation {generation}: Best: {best:2.3f}, Requirement: {bar:2.3f} | Reproducing...', end='\r', flush=True)
+
+        with open("Results.txt", 'w') as fp:
+            winners = list(zip(population, results))
+            winners.sort(key=lambda t: t[1], reverse=True)
+            winners = winners[:numer_of_results]
+            for winner in winners:
+                fp.write(f"Score: {winner[1]}\n")
+                fp.write(config.to_string(winner[0]))
+                fp.write("\n\n")
 
         survivors = [parameters for parameters, score in zip(population, results) if score >= bar]
         survivor_count = len(survivors)
