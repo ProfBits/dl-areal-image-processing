@@ -299,7 +299,7 @@ def cut_houses(image: str, output:str = None, inverted: bool = False)-> np.ndarr
     
     return None
 
-def output_path(path: str, insert: str) -> str:
+def filename_append(path: str, insert: str) -> str:
     """
     Function inserts the 'insert' before the suffix of the 'path'
     Example: masked_path(path: 'Luftbilder/32686_5337.tif', insert: '_masked')
@@ -319,4 +319,4 @@ if __name__ == "__main__":
     # invertedmask = invert_mask(mask=mask)
 
     # cut_houses(image=image_path, output=masked_path(image_path, insert='masked_inv'), inverted=True)
-    cut_houses(image=image_path, output=output_path(image_path, insert='_masked_inv'), inverted=True)
+    cut_houses(image=image_path, output=filename_append(image_path, insert='_masked_inv'), inverted=True)
