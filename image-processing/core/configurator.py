@@ -4,9 +4,9 @@ import sys
 from enum import Enum
 from typing import Callable, Optional, Sequence
 import cv2
-import parameterized.preprocessing as pre
-import parameterized.detection as detect
-import parameterized.postprocessing as post
+import core.preprocessing as pre
+import core.detection as detect
+import core.postprocessing as post
 import numpy as np
 
 
@@ -85,7 +85,8 @@ __args: dict[str, __Parameter] = {
 def __run(image: str | cv2.typing.MatLike, output: Optional[str], parameters: dict[str, any]) -> cv2.typing.MatLike:
     if parameters["enable_shadow_reduction"] is True:
         image = pre.remove_shadows(image,
-                                   convolve_window_size=(parameters["sr_convolve_window_size"] * 2) + 1,
+                                   convolve_window_size=(
+                                       parameters["sr_convolve_window_size"] * 2) + 1,
                                    num_thresholds=parameters["sr_num_thresholds"],
                                    struc_elem_size=parameters["sr_struc_elem_size"],
                                    exponent=parameters["sr_exponent"])
@@ -132,9 +133,11 @@ def __run(image: str | cv2.typing.MatLike, output: Optional[str], parameters: di
     image = post.morphologie(image,
                              output,
                              shape_open=parameters["morph_shape_open"],
-                             size_open=(parameters["morph_size_open_x"], parameters["morph_size_open_y"]),
+                             size_open=(
+                                 parameters["morph_size_open_x"], parameters["morph_size_open_y"]),
                              shape_close=parameters["morph_shape_close"],
-                             size_close=(parameters["morph_size_close_x"], parameters["morph_size_close_y"]),
+                             size_close=(
+                                 parameters["morph_size_close_x"], parameters["morph_size_close_y"]),
                              open_first=parameters["morph_open_first"])
 
     return image
