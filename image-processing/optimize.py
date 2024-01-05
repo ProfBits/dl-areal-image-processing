@@ -3,7 +3,7 @@ from random import choice
 import numpy as np
 import cv2
 
-import parameterized.configurator as config
+import core.configurator as config
 from mask_evaluation import evaluate_masks
 
 
@@ -31,20 +31,24 @@ def run(data: list[tuple[str, str]],
         list[str]: The best n configurations serialized to a string
     """
 
-    data: list[tuple[str, cv2.typing.MatLike]] = [(image, cv2.imread(mask, cv2.IMREAD_GRAYSCALE)) for image, mask in data]
-    population = [config.get_random_configuration() for _ in range(population_size)]
+    data: list[tuple[str, cv2.typing.MatLike]] = [
+        (image, cv2.imread(mask, cv2.IMREAD_GRAYSCALE)) for image, mask in data]
+    population = [config.get_random_configuration()
+                  for _ in range(population_size)]
     population[0] = config.get_default_configuration()
     population[1] = config.get_default_configuration()
     results = []
     for generation in range(generations):
         print(f'Generation {generation}: Starting...', end='\r', flush=True)
-        processes = [config.create_process(parameters) for parameters in population]
+        processes = [config.create_process(parameters)
+                     for parameters in population]
         print(f'Generation {generation}: Running...', end='\r', flush=True)
         results = [__evaluate(process, data) for process in processes]
 
         best = np.max(results)
         bar = max(np.median(results), 0.1)
-        print(f'Generation {generation}: Best: {best:2.3f}, Requirement: {bar:2.3f} | Reproducing...', end='\r', flush=True)
+        print(
+            f'Generation {generation}: Best: {best:2.3f}, Requirement: {bar:2.3f} | Reproducing...', end='\r', flush=True)
 
         with open("Results.txt", 'w') as fp:
             winners = list(zip(population, results))
@@ -55,15 +59,17 @@ def run(data: list[tuple[str, str]],
                 fp.write(config.to_string(winner[0]))
                 fp.write("\n\n")
 
-        survivors = [parameters for parameters, score in zip(population, results) if score >= bar]
+        survivors = [parameters for parameters, score in zip(
+            population, results) if score >= bar]
         survivor_count = len(survivors)
         population = [e for e in survivors]
         for _ in range(population_size - survivor_count):
-            population.append(config.cross_over(choice(survivors), choice(survivors), mutation_chance))
+            population.append(config.cross_over(
+                choice(survivors), choice(survivors), mutation_chance))
 
-        print(f'Generation {generation}: Best: {np.max(results):2.3f}, Requirement: {bar:2.3f} | Done.')
+        print(
+            f'Generation {generation}: Best: {np.max(results):2.3f}, Requirement: {bar:2.3f} | Done.')
 
     winners = list(zip(population, results))
     winners.sort(key=lambda t: t[1], reverse=True)
     return winners[:numer_of_results]
-
