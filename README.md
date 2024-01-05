@@ -44,6 +44,9 @@ To get started you need to download the checkpoints for the models. To do so, ru
 bash ./bin/get_sam_models.sh
 ```
 
-## Add additional info...
+## uNet
+uNet requires a pretrained model to work. This repository contains two jupyter notebooks for image preprocessing on the Potsdam data set and a keras model implementing the model with evaluations.
+For further documentation read the provided documentation at [uNet](/unet/README.md).
+## Add additional info..
 
 @Team pls specify additional info here...
