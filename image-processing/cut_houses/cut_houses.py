@@ -5,6 +5,7 @@ import rasterio
 import numpy as np
 from pathlib import Path
 import os
+from core.tiff_handler import _load_image, _save_image
 
 def __wgs84_to_utm32(lat, lon):
     # Define source and destination CRSs
@@ -224,9 +225,8 @@ def create_house_masks(image:str, output:str = None,)->np.ndarray:
 def cut_mask_from_image(image:str|np.ndarray, mask:str|np.ndarray, output:str = None, inverted:bool = False)-> np.ndarray:
 
     try:
-
-        if(type(image) == str):
-            image = cv2.imread(image)
+        image, tif_meta = _load_image(image)
+        
         if(type(mask) == str):
             mask = cv2.imread(mask)
 
@@ -242,9 +242,9 @@ def cut_mask_from_image(image:str|np.ndarray, mask:str|np.ndarray, output:str = 
         # cv2.imshow('Cutout Image Combined', cutout_image)
         # cv2.waitKey(0)
 
-        if(output != None):
+        if output is not None:
             try:
-                cv2.imwrite(output, cutout_image)
+                _save_image(cutout_image, output, tif_meta)
             except Exception as ee:
                 print(f'Exception while writing to output path: {ee}')
 
