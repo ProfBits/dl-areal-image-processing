@@ -127,18 +127,26 @@ def evaluate_files(masks: list[tuple[str, str]]) -> Evaluation:
     return _evaluate(counts)
 
 
-def print_metrics(metrics: Evaluation):
-    print(f'Results: ')
-    print(f'   accuracy: {metrics.accuracy * 100:.3f} %')
-    print(f'         f1:  {metrics.F1:.3f}')
-    print(f'     recall:  {metrics.recall:.3f} (or sensitivity)')
-    print(f'  precision:  {metrics.precision:.3f}')
-    print(f'specificity:  {metrics.specificity:.3f}')
-    print(f'')
-    print(f'TPR: {metrics.TPR:.3f} | FNR: {metrics.FNR:.3f}')
-    print(f'TNR: {metrics.TNR:.3f} | FPR: {metrics.FPR:.3f}')
-    print(f'PPV: {metrics.PPV:.3f} | FDR: {metrics.FDR:.3f}')
-    print(f'NPV: {metrics.NPV:.3f} | FOR: {metrics.FOR:.3f}')
+def print_metrics(metrics: Evaluation, file=None):
+    output = []
+    output.append(f'Results: ')
+    output.append(f'   accuracy: {metrics.accuracy * 100:.3f} %')
+    output.append(f'         f1:  {metrics.F1:.3f}')
+    output.append(f'     recall:  {metrics.recall:.3f} (or sensitivity)')
+    output.append(f'  precision:  {metrics.precision:.3f}')
+    output.append(f'specificity:  {metrics.specificity:.3f}')
+    output.append('')
+    output.append(f'TPR: {metrics.TPR:.3f} | FNR: {metrics.FNR:.3f}')
+    output.append(f'TNR: {metrics.TNR:.3f} | FPR: {metrics.FPR:.3f}')
+    output.append(f'PPV: {metrics.PPV:.3f} | FDR: {metrics.FDR:.3f}')
+    output.append(f'NPV: {metrics.NPV:.3f} | FOR: {metrics.FOR:.3f}')
+
+    if file is not None:
+        for line in output:
+            print(line, file=file)
+    else:
+        for line in output:
+            print(line)
 
 
 if __name__ == '__main__':

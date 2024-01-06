@@ -224,9 +224,18 @@ def create_house_masks(image:str, output:str = None,)->np.ndarray:
 def cut_mask_from_image(image:str|np.ndarray, mask:str|np.ndarray, output:str = None, inverted:bool = False)-> np.ndarray:
 
     try:
+        # copy from core/preprocessing _load_image -> prevent import errors
+        tif_meta = None
+        if isinstance(image, str):
+            if image.endswith(".tif"):
+                with rasterio.open(image) as src:
+                    tif_meta = src.meta.copy()
+                    # Read with Rasterio and transpose to OpenCV format:
+                    # from (bands, height, width) to (height, width, bands)
+                    image = src.read().transpose(1, 2, 0)
+            else:
+                image = cv2.imread(image)
 
-        if(type(image) == str):
-            image = cv2.imread(image)
         if(type(mask) == str):
             mask = cv2.imread(mask)
 
@@ -242,9 +251,18 @@ def cut_mask_from_image(image:str|np.ndarray, mask:str|np.ndarray, output:str = 
         # cv2.imshow('Cutout Image Combined', cutout_image)
         # cv2.waitKey(0)
 
-        if(output != None):
+        if output is not None:
             try:
-                cv2.imwrite(output, cutout_image)
+                # copy from core/preprocessing _save_image -> prevent import errors
+                if tif_meta is not None:  # TIFF file
+                    # Convert from BGR (OpenCV) to RGB
+                    tif_res = cutout_image[..., ::-1]  # Change channel ordering
+                    # Convert blurred result back to Rasterio format: (bands, height, width)
+                    tif_res = cutout_image.transpose(2, 0, 1)
+                    with rasterio.open(output, 'w', **tif_meta) as dst:
+                        dst.write(tif_res, indexes=list(range(1, tif_meta['count'] + 1)))
+                else:
+                    cv2.imwrite(output, cutout_image)
             except Exception as ee:
                 print(f'Exception while writing to output path: {ee}')
 
