@@ -5,7 +5,7 @@ import rasterio
 import numpy as np
 from pathlib import Path
 import os
-from ..core.tiff_handler import _load_image, _save_image
+from core.tiff_handler import _load_image, _save_image
 
 def __wgs84_to_utm32(lat, lon):
     # Define source and destination CRSs
