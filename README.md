@@ -26,14 +26,9 @@ To update the environment run the following command:
 conda env update -f environment.yml
 ```
 
-## Download data
+## Munich labeld dataset
 
-To experiment with 3 chosen sample images in Munich you first need to download the data.
-To download the data, go into the project root directory and run the following command:
-
-```bash
-bash ./bin/download_data.sh
-```
+Inside the `data` folder you will find a `Munich.zip` file containing the Munich labeled dataset.
 
 ## Segment Anything
 
