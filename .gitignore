@@ -168,4 +168,5 @@ cython_debug/
 /unet/Potsdam/5_Labels_all.zip
 segment-anything/checkpoints/
 data/*
+!data/Munich.zip
 segment-geospatial/tmp/*
