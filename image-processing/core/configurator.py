@@ -8,6 +8,8 @@ import core.preprocessing as pre
 import core.detection as detect
 import core.postprocessing as post
 import numpy as np
+from .tiff_handler import _load_image
+from cut_houses import create_house_masks, cut_mask_from_image
 
 
 class _ParameterType(Enum):
@@ -45,32 +47,36 @@ __morph_shapes = [cv2.MORPH_RECT, cv2.MORPH_CROSS]
 
 __args: dict[str, __Parameter] = {
     "enable_shadow_reduction": __bool_parameter(True),
-    "sr_convolve_window_size": __continues_parameter((1, 15), 5, True),
-    "sr_num_thresholds": __continues_parameter((0, 7), 2, True),
-    "sr_struc_elem_size": __continues_parameter((1, 15), 5, True),
-    "sr_exponent": __continues_parameter((-4, 5), 1),
+    #"sr_convolve_window_size": __continues_parameter((1, 15), 5, True),
+    #"sr_num_thresholds": __continues_parameter((0, 7), 2, True),
+    #"sr_struc_elem_size": __continues_parameter((1, 15), 5, True),
+    #"sr_exponent": __continues_parameter((-4, 5), 1),
+    "contrast_alpha": __continues_parameter((0.5, 2), 1.5),
+    "contrast_beta": __continues_parameter((0, 26), 0),
+    "saturation_factor": __continues_parameter((0.5, 2), 1.5),
     "blurr_size": __continues_parameter((0, 7), 5, True),
     "blurr_sigma": __continues_parameter((0, 6), 0),
-    "use_hsv": __bool_parameter(False),
-    "hsv_limit0_H_MIN": __continues_parameter((0, 255), 64, True),
-    "hsv_limit0_H_MAX": __continues_parameter((0, 255), 150, True),
-    "hsv_limit0_S_MIN": __continues_parameter((0, 100), 0, True),
-    "hsv_limit0_S_MAX": __continues_parameter((0, 100), 100, True),
-    "hsv_limit0_V_MIN": __continues_parameter((0, 100), 20, True),
-    "hsv_limit0_V_MAX": __continues_parameter((0, 100), 80, True),
-    "hsv_limit1_H_MIN": __continues_parameter((0, 255), 40, True),
-    "hsv_limit1_H_MAX": __continues_parameter((0, 255), 60, True),
-    "hsv_limit1_S_MIN": __continues_parameter((0, 100), 30, True),
-    "hsv_limit1_S_MAX": __continues_parameter((0, 100), 70, True),
-    "hsv_limit1_V_MIN": __continues_parameter((0, 100), 20, True),
-    "hsv_limit1_V_MAX": __continues_parameter((0, 100), 80, True),
+    "use_hsv": __categorical_parameter([False], default=False),
+    #"use_hsv": __bool_parameter(False),
+    #"hsv_limit0_H_MIN": __continues_parameter((0, 255), 64, True),
+    #"hsv_limit0_H_MAX": __continues_parameter((0, 255), 150, True),
+    #"hsv_limit0_S_MIN": __continues_parameter((0, 100), 0, True),
+    #"hsv_limit0_S_MAX": __continues_parameter((0, 100), 100, True),
+    #"hsv_limit0_V_MIN": __continues_parameter((0, 100), 20, True),
+    #"hsv_limit0_V_MAX": __continues_parameter((0, 100), 80, True),
+    #"hsv_limit1_H_MIN": __continues_parameter((0, 255), 40, True),
+    #"hsv_limit1_H_MAX": __continues_parameter((0, 255), 60, True),
+    #"hsv_limit1_S_MIN": __continues_parameter((0, 100), 30, True),
+    #"hsv_limit1_S_MAX": __continues_parameter((0, 100), 70, True),
+    #"hsv_limit1_V_MIN": __continues_parameter((0, 100), 20, True),
+    #"hsv_limit1_V_MAX": __continues_parameter((0, 100), 80, True),
     "rgb_red_weight": __continues_parameter((0, 1), 0.5),
-    "rgb_rb_offset": __continues_parameter((-255, 255), 0),
+    "rgb_rb_offset": __continues_parameter((-26, 26), 0),
     "rgb_green_weight": __continues_parameter((0, 2), 1),
     "rgb_sub_weight": __continues_parameter((0, 2), 1),
-    "rgb_sub_offset": __continues_parameter((-255, 255), 0),
+    "rgb_sub_offset": __continues_parameter((-26, 26), 0),
     "bin_threshold": __continues_parameter((0, 255), 127, True),
-    "hist_slope": __continues_parameter((-127, 127), 4),
+    "hist_slope": __continues_parameter((1, 127), 4),
     "hist_offset": __continues_parameter((-127, 127), 0),
     "morph_shape_open": __categorical_parameter(__morph_shapes, cv2.MORPH_RECT),
     "morph_size_open_x": __continues_parameter((1, 9), 3, True),
@@ -82,18 +88,51 @@ __args: dict[str, __Parameter] = {
 }
 
 
-def __run(image: str | cv2.typing.MatLike, output: Optional[str], parameters: dict[str, any]) -> cv2.typing.MatLike:
+def __run(
+        image: str | cv2.typing.MatLike | dict[str, np.ndarray],
+        output: Optional[str],
+        parameters: dict[str, any]) -> cv2.typing.MatLike:
+
+    if isinstance(image, dict):
+        data = image
+        image = data['image']
+        shadow_reduced = data['shadow_reduced']
+        house_mask = data['house_mask']
+    elif isinstance(image, str):
+        image, meta = _load_image(image)
+        shadow_reduced = None
+        if meta is None:
+            house_mask = None
+        else:
+            house_mask = create_house_masks(image)
+    else:
+        shadow_reduced = None
+        house_mask = None
+
     if parameters["enable_shadow_reduction"] is True:
-        image = pre.remove_shadows(image,
-                                   convolve_window_size=(
-                                       parameters["sr_convolve_window_size"] * 2) + 1,
-                                   num_thresholds=parameters["sr_num_thresholds"],
-                                   struc_elem_size=parameters["sr_struc_elem_size"],
-                                   exponent=parameters["sr_exponent"])
+        if shadow_reduced is None:
+            image = pre.remove_shadows(image,
+                                       convolve_window_size=(
+                                           parameters["sr_convolve_window_size"] * 2) + 1,
+                                       num_thresholds=parameters["sr_num_thresholds"],
+                                       struc_elem_size=parameters["sr_struc_elem_size"],
+                                       exponent=parameters["sr_exponent"])
+        else:
+            image = shadow_reduced
+
+    image = pre.increase_contrast(image,
+                          alpha=parameters["contrast_alpha"],
+                          beta=parameters["contrast_beta"])
+
+    image = pre.increase_saturation(image,
+                          factor=parameters["saturation_factor"])
 
     image = pre.gaussian_blur(image,
                               size=(parameters["blurr_size"] * 2) + 1,
                               sigma=parameters["blurr_sigma"])
+
+    if house_mask is not None:
+        image = cut_mask_from_image(image, house_mask)
 
     if parameters["use_hsv"] is True:
         image = detect.hsv_detection(image,
@@ -139,6 +178,9 @@ def __run(image: str | cv2.typing.MatLike, output: Optional[str], parameters: di
                              size_close=(
                                  parameters["morph_size_close_x"], parameters["morph_size_close_y"]),
                              open_first=parameters["morph_open_first"])
+
+    if house_mask is not None:
+        image = cut_mask_from_image(image, house_mask, output)
 
     return image
 
