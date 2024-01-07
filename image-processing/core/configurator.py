@@ -99,24 +99,27 @@ def __run(
         shadow_reduced = data['shadow_reduced']
         house_mask = data['house_mask']
     elif isinstance(image, str):
+        path = image
         image, meta = _load_image(image)
         shadow_reduced = None
         if meta is None:
             house_mask = None
         else:
-            house_mask = create_house_masks(image)
+            house_mask = create_house_masks(path)
     else:
         shadow_reduced = None
         house_mask = None
 
     if parameters["enable_shadow_reduction"] is True:
-        if shadow_reduced is None:
+        if shadow_reduced is None and "sr_convolve_window_size" in parameters:
             image = pre.remove_shadows(image,
                                        convolve_window_size=(
                                            parameters["sr_convolve_window_size"] * 2) + 1,
                                        num_thresholds=parameters["sr_num_thresholds"],
                                        struc_elem_size=parameters["sr_struc_elem_size"],
                                        exponent=parameters["sr_exponent"])
+        elif shadow_reduced is None:
+            image = pre.remove_shadows(image)
         else:
             image = shadow_reduced
 
@@ -253,7 +256,11 @@ def to_string(configuration: dict[str, any]):
 
 
 def load_string(data: str) -> dict[str, any]:
-    return json.loads(data)
+    data = json.loads(data)
+    for k, v in get_default_configuration().items():
+        if k not in data:
+            data[k] = v
+    return data
 
 
 def get_default_configuration():
