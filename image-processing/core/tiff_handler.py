@@ -18,6 +18,7 @@ def _load_image(image: str | np.ndarray) -> tuple[np.ndarray, Optional[dict]]:
 
     return image, meta
 
+
 def _save_image(res: np.ndarray, output: str, tif_meta: Optional[dict]) -> None:
 
     if tif_meta is not None:  # TIFF file

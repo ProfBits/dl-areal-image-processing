@@ -227,10 +227,13 @@ def cut_mask_from_image(image:str|np.ndarray, mask:str|np.ndarray, output:str = 
     try:
         image, tif_meta = _load_image(image)
         
-        if(type(mask) == str):
-            mask = cv2.imread(mask)
+        mask, _ = _load_image(mask)
+        if np.prod(mask.shape) < np.prod(image.shape):
+            mask = cv2.merge((mask, mask, mask))
+        elif np.prod(mask.shape) > np.prod(image.shape):
+            (mask, _, _) = cv2.split(mask)
 
-        if(inverted):
+        if inverted:
             mask = invert_mask(mask=mask)
         #     cutout_image = cv2.bitwise_or(image, mask)
         # else:

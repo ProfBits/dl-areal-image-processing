@@ -1,0 +1,130 @@
+Score: 0.9407124297432646
+{
+    "enable_shadow_reduction": true,
+    "contrast_alpha": 1.6894569235328585,
+    "contrast_beta": 15.449380703889851,
+    "saturation_factor": 1.9107679565370657,
+    "blurr_size": 3,
+    "blurr_sigma": 5.880489435307353,
+    "use_hsv": false,
+    "rgb_red_weight": 0.39680364752100833,
+    "rgb_rb_offset": 16.907463562925233,
+    "rgb_green_weight": 1.722941581715099,
+    "rgb_sub_weight": 1.885154593193348,
+    "rgb_sub_offset": 23.608548067171327,
+    "bin_threshold": 254,
+    "hist_slope": 113.96606235605122,
+    "hist_offset": 112.95526318150152,
+    "morph_shape_open": 1,
+    "morph_size_open_x": 8,
+    "morph_size_open_y": 7,
+    "morph_shape_close": 0,
+    "morph_size_close_x": 9,
+    "morph_size_close_y": 7,
+    "morph_open_first": true
+}
+
+Score: 0.9405214155266459
+{
+    "enable_shadow_reduction": true,
+    "contrast_alpha": 1.6940264497317792,
+    "contrast_beta": 0.34308564222341165,
+    "saturation_factor": 1.9153206346960108,
+    "blurr_size": 5,
+    "blurr_sigma": 5.961388702574724,
+    "use_hsv": false,
+    "rgb_red_weight": 0.39608530052748037,
+    "rgb_rb_offset": 18.92053890545189,
+    "rgb_green_weight": 1.722941581715099,
+    "rgb_sub_weight": 1.885154593193348,
+    "rgb_sub_offset": 23.67754911197571,
+    "bin_threshold": 252,
+    "hist_slope": 116.43712403164004,
+    "hist_offset": 116.23626994324138,
+    "morph_shape_open": 1,
+    "morph_size_open_x": 8,
+    "morph_size_open_y": 9,
+    "morph_shape_close": 0,
+    "morph_size_close_x": 9,
+    "morph_size_close_y": 7,
+    "morph_open_first": true
+}
+
+Score: 0.9405214155266459
+{
+    "enable_shadow_reduction": true,
+    "contrast_alpha": 1.6940264497317792,
+    "contrast_beta": 0.34308564222341165,
+    "saturation_factor": 1.9153206346960108,
+    "blurr_size": 5,
+    "blurr_sigma": 5.961388702574724,
+    "use_hsv": false,
+    "rgb_red_weight": 0.39608530052748037,
+    "rgb_rb_offset": 18.92053890545189,
+    "rgb_green_weight": 1.722941581715099,
+    "rgb_sub_weight": 1.885154593193348,
+    "rgb_sub_offset": 23.67754911197571,
+    "bin_threshold": 252,
+    "hist_slope": 116.43712403164004,
+    "hist_offset": 116.23626994324138,
+    "morph_shape_open": 1,
+    "morph_size_open_x": 8,
+    "morph_size_open_y": 9,
+    "morph_shape_close": 0,
+    "morph_size_close_x": 9,
+    "morph_size_close_y": 7,
+    "morph_open_first": true
+}
+
+Score: 0.9404129906536158
+{
+    "enable_shadow_reduction": true,
+    "contrast_alpha": 1.6894569235328585,
+    "contrast_beta": 15.449380703889851,
+    "saturation_factor": 1.9107679565370657,
+    "blurr_size": 4,
+    "blurr_sigma": 5.716503494733809,
+    "use_hsv": false,
+    "rgb_red_weight": 0.39680364752100833,
+    "rgb_rb_offset": 16.907463562925233,
+    "rgb_green_weight": 1.722941581715099,
+    "rgb_sub_weight": 1.885154593193348,
+    "rgb_sub_offset": 23.751860326766387,
+    "bin_threshold": 254,
+    "hist_slope": 113.74118438190285,
+    "hist_offset": 112.95526318150152,
+    "morph_shape_open": 1,
+    "morph_size_open_x": 8,
+    "morph_size_open_y": 9,
+    "morph_shape_close": 0,
+    "morph_size_close_x": 9,
+    "morph_size_close_y": 7,
+    "morph_open_first": true
+}
+
+Score: 0.9403870138141771
+{
+    "enable_shadow_reduction": true,
+    "contrast_alpha": 1.6894569235328585,
+    "contrast_beta": 15.449380703889851,
+    "saturation_factor": 1.9107679565370657,
+    "blurr_size": 3,
+    "blurr_sigma": 5.716503494733809,
+    "use_hsv": false,
+    "rgb_red_weight": 0.39680364752100833,
+    "rgb_rb_offset": 16.907463562925233,
+    "rgb_green_weight": 1.722941581715099,
+    "rgb_sub_weight": 1.885154593193348,
+    "rgb_sub_offset": 23.608548067171327,
+    "bin_threshold": 254,
+    "hist_slope": 113.74118438190285,
+    "hist_offset": 112.95526318150152,
+    "morph_shape_open": 1,
+    "morph_size_open_x": 8,
+    "morph_size_open_y": 9,
+    "morph_shape_close": 0,
+    "morph_size_close_x": 9,
+    "morph_size_close_y": 7,
+    "morph_open_first": true
+}
+
