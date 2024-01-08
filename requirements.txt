@@ -1,0 +1,24 @@
+numpy
+pandas
+matplotlib
+seaborn
+Pillow
+opencv-python
+ipykernel
+tensorflow
+scikit-learn
+scikit-image
+torch
+torchvision
+torchaudio
+pycocotools
+laspy # for laserdata
+pyvista
+trame # interactive 3d
+ipywidgets # interactive 3d
+rasterio
+# gdal
+geopandas
+segment-geospatial
+leafmap
+git+https://github.com/facebookresearch/segment-anything.git
