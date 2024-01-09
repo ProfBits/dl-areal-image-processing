@@ -21,15 +21,15 @@ data = [
     (f'{folder}32692_5347.tif', f'{folder}32692_5347_label.png'),
 ]
 population_size: int = 200
-mutation_chance: float = 0.025
-generations: int = 100000
-numer_of_results: int = 5
+mutation_chance: float = 2.0 / 22.00
+generations: int = 1000000
+numer_of_results: int = 10
 
 
 def run_optimize():
     work_dir = "./../data/work_dir/"
     house_mask_name = "_house_mask.png"
-    cut_label_name = "_cut_label.png"
+    label_name = "_label.png"
     shadow_mask_name = "_shadow_mask.png"
     shadow_reduced_name = "_no_shadow.png"
 
@@ -40,20 +40,22 @@ def run_optimize():
     prepared_data = {}
 
     for image, label in data:
+        print(f'Prepearing {image}...', end='', flush=True)
         name = image.split('/')[-1][:-len('.tif')]
         shutil.copy(image,  work_dir + name + '.tif')
         create_house_masks(image, work_dir + name + house_mask_name)
-        cut_mask_from_image(label, work_dir + name + house_mask_name, work_dir + name + cut_label_name)
+        shutil.copy(label, work_dir + name + label_name)
 
         shadow_detection(image, work_dir + name + shadow_mask_name)
         shadow_correction(image, work_dir + name + shadow_mask_name, work_dir + name + shadow_reduced_name)
 
         prepared_data[name] = {
             'image': imread(work_dir + name + '.tif'),
-            'cut_label': imread(work_dir + name + cut_label_name, IMREAD_GRAYSCALE),
+            'cut_label': imread(work_dir + name + label_name, IMREAD_GRAYSCALE),
             'shadow_reduced': imread(work_dir + name + shadow_reduced_name),
             'house_mask': imread(work_dir + name + house_mask_name, IMREAD_GRAYSCALE),
         }
+        print(f'Done')
 
     best = optimize.run(prepared_data,
                         population_size=population_size,
