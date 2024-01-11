@@ -171,3 +171,5 @@ data/*
 !data/Munich.zip
 segment-geospatial/tmp/*
 /mmseg/checkpoints
+/mmseg/data/*
+./data
