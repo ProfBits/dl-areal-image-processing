@@ -1,6 +1,7 @@
 import json
 from random import choice
 from typing import Optional
+from datetime import datetime as dt
 
 import numpy as np
 import cv2
@@ -8,6 +9,9 @@ import cv2
 import core.configurator as config
 
 from mask_evaluation import evaluate_masks
+
+
+tstamp_format = "%d/%m/%Y %H:%M:%S"
 
 
 def __evaluate(process, data) -> float:
@@ -58,10 +62,10 @@ def run(data: list[tuple[str, str]] | dict[str, dict[str, np.ndarray]],
     survivors = []
     survivor_results = []
     for generation in range(generations):
-        print(f'Generation {generation}: Starting...', end='\r', flush=True)
+        print(f'{dt.now().strftime(tstamp_format)} Generation {generation}: Starting...', end='\r', flush=True)
         processes = [config.create_process(parameters)
                      for parameters in new_population]
-        print(f'Generation {generation}: Running...', end='\r', flush=True)
+        print(f'{dt.now().strftime(tstamp_format)} Generation {generation}: Running...', end='\r', flush=True)
         new_results = [__evaluate(process, data) for process in processes]
 
         # combine results
@@ -71,7 +75,7 @@ def run(data: list[tuple[str, str]] | dict[str, dict[str, np.ndarray]],
         best = np.max(results)
         bar = max(np.median(results), 0.1)
         print(
-            f'Generation {generation}: Best: {best:2.3f}, Requirement: {bar:2.3f} | Reproducing...', end='\r', flush=True)
+            f'{dt.now().strftime(tstamp_format)} Generation {generation}: Best: {best:2.3f}, Requirement: {bar:2.3f} | Reproducing...', end='\r', flush=True)
 
         if running_results is not None:
             winners = list(zip(population, results))
@@ -94,7 +98,7 @@ def run(data: list[tuple[str, str]] | dict[str, dict[str, np.ndarray]],
                           for _ in range(population_size - survivor_count)]
 
         print(
-            f'Generation {generation}: Best: {np.max(results):2.3f}, Requirement: {bar:2.3f} | Done.')
+            f'{dt.now().strftime(tstamp_format)} Generation {generation}: Best: {np.max(results):2.3f}, Requirement: {bar:2.3f} | Done.')
 
     winners = list(zip(population, results))
     winners.sort(key=lambda t: t[1], reverse=True)
