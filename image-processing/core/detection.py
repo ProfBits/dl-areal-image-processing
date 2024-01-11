@@ -12,10 +12,10 @@ S = 1
 V = 2
 
 
-def rgb_detection(image: str | cv2.typing.MatLike, output: Optional[str] = None,
+def rgb_detection(image: str | np.ndarray, output: Optional[str] = None,
                   red_weight=0.5, rb_offset=0.0,
                   green_weight=1.0, sub_weight=1.0, sub_offset=0.0)\
-        -> cv2.typing.MatLike:
+        -> np.ndarray:
     if image is str:
         image = cv2.imread(image)
 
@@ -38,15 +38,15 @@ class Limit(Enum):
     V_MAX = 0
 
 
-def __check_bounds(image: cv2.typing.MatLike, lower: int, upper: int) -> np.ndarray:
+def __check_bounds(image: np.ndarray, lower: int, upper: int) -> np.ndarray:
     lower_bound = (np.ones(image.shape) * lower) <= image
     upper_bound = image <= (np.ones(image.shape) * upper)
     return np.logical_and(lower_bound, upper_bound)
 
 
-def hsv_detection(image: str | cv2.typing.MatLike, output: Optional[str] = None,
+def hsv_detection(image: str | np.ndarray, output: Optional[str] = None,
                   limits: list[dict[Limit, int]] = None)\
-        -> cv2.typing.MatLike:
+        -> np.ndarray:
     if limits is None:
         raise Exception("Limits need to be configured")
 
@@ -69,9 +69,9 @@ def hsv_detection(image: str | cv2.typing.MatLike, output: Optional[str] = None,
     return res
 
 
-def histogram_adjustment(image: str | cv2.typing.MatLike, output: Optional[str] = None,
+def histogram_adjustment(image: str | np.ndarray, output: Optional[str] = None,
                          slope: int = 1, offset: int = 0)\
-        -> cv2.typing.MatLike:
+        -> np.ndarray:
     if isinstance(image, str):
         image = cv2.imread(image)
 
@@ -84,9 +84,9 @@ def histogram_adjustment(image: str | cv2.typing.MatLike, output: Optional[str] 
     return res
 
 
-def binarisation(image: str | cv2.typing.MatLike, output: Optional[str] = None,
+def binarisation(image: str | np.ndarray, output: Optional[str] = None,
                  threshold: int = 127)\
-        -> cv2.typing.MatLike:
+        -> np.ndarray:
     if isinstance(image, str):
         image = cv2.imread(image)
 

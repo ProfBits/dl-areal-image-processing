@@ -6,6 +6,7 @@ import numpy as np
 import cv2
 
 import core.configurator as config
+
 from mask_evaluation import evaluate_masks
 
 
@@ -38,7 +39,7 @@ def run(data: list[tuple[str, str]] | dict[str, dict[str, np.ndarray]],
     """
 
     if isinstance(data, list):
-        data: list[tuple[str, cv2.typing.MatLike]] = [
+        data: list[tuple[str, np.ndarray]] = [
             (image, cv2.imread(mask, cv2.IMREAD_GRAYSCALE)) for image, mask in data]
     else:
         data: list[tuple[dict[str, np.ndarray], np.ndarray]] = [(val, val['cut_label']) for val in data.values()]

@@ -89,9 +89,9 @@ __args: dict[str, __Parameter] = {
 
 
 def __run(
-        image: str | cv2.typing.MatLike | dict[str, np.ndarray],
+        image: str | np.ndarray | dict[str, np.ndarray],
         output: Optional[str],
-        parameters: dict[str, any]) -> cv2.typing.MatLike:
+        parameters: dict[str, any]) -> np.ndarray:
 
     if isinstance(image, dict):
         data = image
@@ -189,7 +189,7 @@ def __run(
 
 
 def create_process(parameters: dict[str, any])\
-        -> Callable[[str | cv2.typing.MatLike, Optional[str]], cv2.typing.MatLike]:
+        -> Callable[[str | np.ndarray, Optional[str]], np.ndarray]:
     return lambda image, output = None: __run(image, output, parameters)
 
 
