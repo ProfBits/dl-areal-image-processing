@@ -29,7 +29,7 @@ numer_of_results: int = 10
 def run_optimize():
     work_dir = "./../data/work_dir/"
     house_mask_name = "_house_mask.png"
-    label_name = "_label.png"
+    cut_label_name = "_cut_label.png"
     shadow_mask_name = "_shadow_mask.png"
     shadow_reduced_name = "_no_shadow.png"
 
@@ -44,14 +44,14 @@ def run_optimize():
         name = image.split('/')[-1][:-len('.tif')]
         shutil.copy(image,  work_dir + name + '.tif')
         create_house_masks(image, work_dir + name + house_mask_name)
-        shutil.copy(label, work_dir + name + label_name)
+        cut_mask_from_image(label, work_dir + name + house_mask_name, work_dir + name + cut_label_name)
 
         shadow_detection(image, work_dir + name + shadow_mask_name)
         shadow_correction(image, work_dir + name + shadow_mask_name, work_dir + name + shadow_reduced_name)
 
         prepared_data[name] = {
             'image': imread(work_dir + name + '.tif'),
-            'cut_label': imread(work_dir + name + label_name, IMREAD_GRAYSCALE),
+            'cut_label': imread(work_dir + name + cut_label_name, IMREAD_GRAYSCALE),
             'shadow_reduced': imread(work_dir + name + shadow_reduced_name),
             'house_mask': imread(work_dir + name + house_mask_name, IMREAD_GRAYSCALE),
         }
