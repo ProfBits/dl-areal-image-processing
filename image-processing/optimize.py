@@ -8,6 +8,8 @@ import cv2
 
 import core.configurator as config
 
+import sys
+sys.path.append("./../")
 from mask_evaluation import evaluate_masks
 
 
