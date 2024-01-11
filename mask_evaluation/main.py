@@ -44,6 +44,8 @@ class Evaluation:
     """Precision in range 0 to 1"""
     accuracy: float
     """Accuracy in range 0 to 1"""
+    iou: float
+    """Intersection over Unition or Jaccard index"""
 
 
 def _evaluate(counter: Counter) -> Evaluation:
@@ -62,8 +64,9 @@ def _evaluate(counter: Counter) -> Evaluation:
 
     ACC = accuracy = (counter[TRUE_POSITIVE] + counter[TRUE_NEGATIVE]) / counter.total()
     f1 = 2 * precision * recall / (precision + recall)
+    iou = counter[TRUE_POSITIVE] / (counter[TRUE_POSITIVE] + counter[FALSE_POSITIVE] + counter[FALSE_NEGATIVE]) 
 
-    return Evaluation(TPR, FNR, TNR, FPR, PPV, FDR, NPV, FOR, ACC, f1, sensitivity, recall, specificity, precision, accuracy)
+    return Evaluation(TPR, FNR, TNR, FPR, PPV, FDR, NPV, FOR, ACC, f1, sensitivity, recall, specificity, precision, accuracy, iou)
 
 
 def _count_mask(base_mask: ndarray, actual: ndarray) -> Counter:
@@ -135,6 +138,7 @@ def print_metrics(metrics: Evaluation, file=None):
     output.append(f'     recall:  {metrics.recall:.3f} (or sensitivity)')
     output.append(f'  precision:  {metrics.precision:.3f}')
     output.append(f'specificity:  {metrics.specificity:.3f}')
+    output.append(f'        iou:  {metrics.iou:.3f} (or Jaccard index)')
     output.append('')
     output.append(f'TPR: {metrics.TPR:.3f} | FNR: {metrics.FNR:.3f}')
     output.append(f'TNR: {metrics.TNR:.3f} | FPR: {metrics.FPR:.3f}')
