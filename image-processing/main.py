@@ -21,13 +21,13 @@ data = [
     (f'{folder}32692_5347.tif', f'{folder}32692_5347_label.png'),
 ]
 population_size: int = 200
-mutation_chance: float = 2.0 / 22.00
-generations: int = 1000000
+mutation_chance: float = 1.0 / 22.00
+generations: int = 10000000
 numer_of_results: int = 10
 
 
 def run_optimize():
-    work_dir = "./../data/work_dir/"
+    work_dir = "./../temp/work_dir/"
     house_mask_name = "_house_mask.png"
     cut_label_name = "_cut_label.png"
     shadow_mask_name = "_shadow_mask.png"
@@ -55,7 +55,7 @@ def run_optimize():
             'shadow_reduced': imread(work_dir + name + shadow_reduced_name),
             'house_mask': imread(work_dir + name + house_mask_name, IMREAD_GRAYSCALE),
         }
-        print(f'Done')
+        print(f' Done.')
 
     best = optimize.run(prepared_data,
                         population_size=population_size,
@@ -64,13 +64,13 @@ def run_optimize():
                         numer_of_results=numer_of_results,
                         running_results=work_dir + "current_best.txt",
                         seed_parameters=[
-                            get_default_configuration(),
-                            get_default_configuration(),
-                            load_string(init.score_0_9407),
-                            load_string(init.score_0_9403),
-                            load_string(init.score_0_9404),
-                            load_string(init.score_0_9405),
-                            load_string(init.score_0_94052),
+                            #get_default_configuration(),
+                            #get_default_configuration(),
+                            #load_string(init.score_0_9407),
+                            #load_string(init.score_0_9403),
+                            #load_string(init.score_0_9404),
+                            #load_string(init.score_0_9405),
+                            #load_string(init.score_0_94052),
                         ])
 
     for i, config in enumerate(best):
