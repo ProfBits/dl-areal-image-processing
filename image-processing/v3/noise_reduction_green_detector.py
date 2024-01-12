@@ -1,9 +1,10 @@
 import cv2
 import shadow
 import os
+import numpy as np
 
 def process_image(image_path: str, save_path: str="13_automated_noise_reduced_x2.png", reduce_shadows: bool = True):
-    image: cv2.typing.MatLike
+    image: np.ndarray
 
     if reduce_shadows:
         mask = "shadow_mask.temp.png"
@@ -23,7 +24,7 @@ def process_image(image_path: str, save_path: str="13_automated_noise_reduced_x2
     equalized = cv2.equalizeHist(greens)
     _, raw_binary_mask = cv2.threshold(equalized, 127, 255, cv2.THRESH_BINARY)
 
-    kernel: cv2.typing.MatLike = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    kernel: np.ndarray = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     binary_mask = cv2.morphologyEx(raw_binary_mask, cv2.MORPH_CLOSE, kernel)
     binary_mask = cv2.morphologyEx(binary_mask, cv2.MORPH_OPEN, kernel)
 

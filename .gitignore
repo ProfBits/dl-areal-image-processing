@@ -170,3 +170,4 @@ segment-anything/checkpoints/
 data/*
 !data/Munich.zip
 segment-geospatial/tmp/*
+temp/*
