@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 from samgeo import split_raster, merge_rasters
 from samgeo.text_sam import LangSAM
 from utils import create_empty_mask
@@ -19,27 +20,27 @@ from cut_houses.cut_houses import cut_houses
 TRAIN_PATH = '../data/Munich/2023/raw'
 PREDICTED_PATH = '../data/Munich/2023/prediction'
 MODEL_TYPE = "vit_h" # "vit_h" | "vit_l"
-SUBFOLDER = "samgeo_batches_v4" # subfolder to store predictions
+SUBFOLDER = "samgeo_batches_v7" # subfolder to store predictions
 #######   FINE TUNING   #######
 box_threshold = 0.25
 text_threshold = 0.5
 text_prompt = "tree . lawn . gras"
 tile_size = 256
 overlap = 64
-img_processing = ["increase_contrast", "increase_saturation", "cut_houses"]
+img_processing = []
 # img_processing = ["remove_shadows", "gaussian_blur", "increase_contrast", "increase_saturation", "cut_houses"]
+cut_houses_from_mask = True 
 ###############################
 
 
 
 ### Create LangSAM Model ####
-
 if MODEL_TYPE == "vit_l":
     SAM_CHECKPOINT = "../segment-anything/checkpoints/sam_vit_l_0b3195.pth"
 else: # vit_h
     SAM_CHECKPOINT = "../segment-anything/checkpoints/sam_vit_h_4b8939.pth"
 
-sam = LangSAM(model_type=MODEL_TYPE, checkpoint=SAM_CHECKPOINT)
+lang_sam = LangSAM(model_type=MODEL_TYPE, checkpoint=SAM_CHECKPOINT)
 
 
 # read all files
@@ -62,12 +63,16 @@ with open(info_file, "w") as f:
     f.write("tile_size: {}\n".format(tile_size))
     f.write("overlap: {}\n".format(overlap))
     f.write("preprocessing: {}\n".format(" | ".join(img_processing)))  # write processing steps to info file
+    if cut_houses_from_mask: 
+        f.write("Houses were cut from predicted mask\n")
     
 # tmp folder for batch segmentation
 work_dir = "tmp"
 tiles_dir = f"{work_dir}/tiles"
 mask_dir = f"{work_dir}/masks"
 
+# timing the prediction
+start_time = time.time()
 
 for file_name in train_files:
     
@@ -98,37 +103,29 @@ for file_name in train_files:
     # create tmp/masks
     os.makedirs(mask_dir)
     
-    # sam.batch_predict written on my own to fix not creating empty masks
-    if isinstance(tiles_dir, str):
-        all_files = os.listdir(tiles_dir)
-        images = [os.path.join(tiles_dir, file) for file in all_files if file.endswith(".tif")]
-        images.sort()
-
-    for i, image in enumerate(images):
-        basename = os.path.splitext(os.path.basename(image))[0]
-
-        output = os.path.join(mask_dir, f"{basename}_mask.tif")
-        res = sam.predict(
-            image,
-            text_prompt,
-            box_threshold=box_threshold,
-            text_threshold=text_threshold,
-            output=output,
-            return_results=True
-        )
-        
-        # create empty mask because samgeo does not create empty masks
-        if res is None:
-            create_empty_mask(image, output)
-        
-
-    # merge tiles into one mask
+    lang_sam.predict_batch(
+        images=tiles_dir,
+        out_dir=mask_dir,
+        text_prompt=text_prompt,
+        box_threshold=box_threshold,
+        text_threshold=text_threshold,
+        merge=True,
+    )
     mask_path = os.path.join(result_path, img_name + '_predicted.tif')
-    merge_rasters(mask_dir, mask_path)
+    os.system(f"mv {mask_dir}/merged.tif {mask_path}")
+    
+    if cut_houses_from_mask:
+        cut_houses(mask_path, output=mask_path)
     print(f"Prediction finished for file: {file_name}")
     
 
 print(f"Done! Results saved to: {result_path}") 
+
+# End time for predictions
+end_time = time.time()
+elapsed_time = end_time - start_time
+elapsed_hours = elapsed_time / 3600
+print(f"Total prediction time: {elapsed_hours:.2f} hours")
 
 ### Evaluation ###
 masks = []
@@ -146,6 +143,7 @@ evaluation = evaluate_files(masks)
 with open(info_file, "a") as metrics_file:
     metrics_file.write("\n")
     print_metrics(evaluation, file=metrics_file)
+    metrics_file.write(f"\nPrediction time: {elapsed_hours:.2f} hours\n")
 
 # print to command line
 print_metrics(evaluation)
