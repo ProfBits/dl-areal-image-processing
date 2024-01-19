@@ -128,3 +128,55 @@ score_0_9403 = '''
     "morph_open_first": true
 }
 '''
+f1_score_0_9431 = '''
+{
+    "enable_shadow_reduction": true,
+    "contrast_alpha": 1.424101820087937,
+    "contrast_beta": 19.891731816389033,
+    "saturation_factor": 1.9888358882753066,
+    "blurr_size": 3,
+    "blurr_sigma": 5.432948810542104,
+    "use_hsv": false,
+    "rgb_red_weight": 0.44666115058259265,
+    "rgb_rb_offset": 13.677263977690762,
+    "rgb_green_weight": 1.7415562478133746,
+    "rgb_sub_weight": 1.918294745541775,
+    "rgb_sub_offset": 22.212259447663005,
+    "bin_threshold": 248,
+    "hist_slope": 117.89733224965106,
+    "hist_offset": 122.26821680023653,
+    "morph_shape_open": 1,
+    "morph_size_open_x": 2,
+    "morph_size_open_y": 7,
+    "morph_shape_close": 0,
+    "morph_size_close_x": 7,
+    "morph_size_close_y": 9,
+    "morph_open_first": true
+}
+'''
+iou_score_0_8963 = '''
+{
+    "enable_shadow_reduction": true,
+    "contrast_alpha": 1.5105687458110961,
+    "contrast_beta": 10.902952205188113,
+    "saturation_factor": 1.5241246972310263,
+    "blurr_size": 7,
+    "blurr_sigma": 2.3147999100749193,
+    "use_hsv": false,
+    "rgb_red_weight": 0.4440188481992021,
+    "rgb_rb_offset": 12.235151202974585,
+    "rgb_green_weight": 1.8394904545801607,
+    "rgb_sub_weight": 1.9904648341095654,
+    "rgb_sub_offset": 20.349376077536178,
+    "bin_threshold": 244,
+    "hist_slope": 124.59302348500923,
+    "hist_offset": 112.3121456936327,
+    "morph_shape_open": 1,
+    "morph_size_open_x": 4,
+    "morph_size_open_y": 7,
+    "morph_shape_close": 0,
+    "morph_size_close_x": 7,
+    "morph_size_close_y": 9,
+    "morph_open_first": true
+}
+'''
