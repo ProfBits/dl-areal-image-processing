@@ -23,9 +23,13 @@ def _save_image(res: np.ndarray, output: str, tif_meta: Optional[dict]) -> None:
 
     if tif_meta is not None:  # TIFF file
         # Convert from BGR (OpenCV) to RGB
-        tif_res = res[..., ::-1]  # Change channel ordering
-        # Convert blurred result back to Rasterio format: (bands, height, width)
-        tif_res = res.transpose(2, 0, 1)
+        if tif_meta["count"] == 3:
+            tif_res = res[..., ::-1]  # Change channel ordering
+            # Convert blurred result back to Rasterio format: (bands, height, width)
+            tif_res = res.transpose(2, 0, 1)
+        else:
+            tif_res = res[np.newaxis, ...]
+
         with rasterio.open(output, 'w', **tif_meta) as dst:
             dst.write(tif_res, indexes=list(range(1, tif_meta['count'] + 1)))
     else:
